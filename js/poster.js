@@ -16,7 +16,7 @@
 
   ctx.font = "35px Georgia";
 
-  ctx.fillStyle = "#FF0000";
+  ctx.fillStyle = "#000000";
 
   ctx.fillText("M", 3, 35);
 
@@ -27,7 +27,7 @@
     bw = [];
     for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
       d = data[i];
-      if (i % 4 === 0) {
+      if (i % 4 === 3) {
         bw.push(d);
       }
     }

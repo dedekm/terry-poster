@@ -6,7 +6,7 @@ document.body.appendChild(canvas)
 ctx = canvas.getContext("2d")
 
 ctx.font = "35px Georgia"
-ctx.fillStyle = "#FF0000"
+ctx.fillStyle = "#000000"
 ctx.fillText("M", 3, 35)
 
 getData = (content) ->
@@ -14,7 +14,7 @@ getData = (content) ->
   data = imageData.data
   bw = []
   for d, i in data
-    bw.push(d) if i % 4 == 0
+    bw.push(d) if i % 4 == 3
 
   w = bw.length / canvas.width
   h = bw.length / canvas.height
