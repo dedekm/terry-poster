@@ -1,3 +1,23 @@
+canvas = document.createElement('canvas')
+canvas.id = 'canvas'
+canvas.width = 40
+canvas.height = 40
+document.body.appendChild(canvas)
+ctx = canvas.getContext("2d")
+
+ctx.font = "35px Georgia"
+ctx.fillStyle = "#FF0000"
+ctx.fillText("M", 2, 32)
+
+getData = (content) ->
+  imageData = content.getImageData(0, 0, content.canvas.width, content.canvas.height)
+  data = imageData.data
+  bw = []
+  for d, i in data
+    bw.push(d) if i % 4 == 0
+
+getData(ctx)
+
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100 )
 scene = new THREE.Scene()
