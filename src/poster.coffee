@@ -7,7 +7,7 @@ ctx = canvas.getContext("2d")
 
 ctx.font = "35px Georgia"
 ctx.fillStyle = "#FF0000"
-ctx.fillText("M", 2, 32)
+ctx.fillText("M", 3, 35)
 
 getData = (content) ->
   imageData = content.getImageData(0, 0, content.canvas.width, content.canvas.height)
@@ -16,7 +16,21 @@ getData = (content) ->
   for d, i in data
     bw.push(d) if i % 4 == 0
 
-getData(ctx)
+  w = bw.length / canvas.width
+  h = bw.length / canvas.height
+  p = new Array(w)
+  for x in [0...w]
+    p[x] = []
+    for y in [0...h]
+      p[x].push( 0 )
+  for x in [0...w]
+    for y in [0...h]
+      d = x + (w * h - w ) - (y * h)
+      p[x][y] = bw[d]
+  return p
+
+pixelGrid = getData(ctx)
+
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100 )
@@ -39,12 +53,12 @@ setGrid = (w, h, d) ->
     g.push a
   return g
 
-helpGrid = (grid) ->
+helpGrid = (grid, pixels) ->
   g = new THREE.Group
-  for x in [0..grid.length - 1]
-    for y in [0..grid[x].length - 1]
+  for x in [0...grid.length]
+    for y in [0...grid[x].length]
       z = grid[x][y].length - 1
-      if grid[x][y][z].full
+      if pixels[x][y] != 0
         material1 = new THREE.MeshBasicMaterial( { color: 0xff0000 } )
       else
         material1 = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
@@ -53,12 +67,12 @@ helpGrid = (grid) ->
       g.add( cube )
   return g
 
-grid = setGrid(16, 16, 5)
-camera.position.set( 8, 8, 20 )
+grid = setGrid(40, 40, 5)
+camera.position.set( 20, 20, 45 )
 
 geometry1 = new THREE.BoxGeometry( 0.1, 0.1, 0.1)
 
-scene.add(helpGrid(grid))
+scene.add(helpGrid(grid, pixelGrid))
 
 render = () ->
   renderer.render( scene, camera )
