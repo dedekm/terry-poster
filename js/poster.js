@@ -99,6 +99,16 @@
       return n;
     };
 
+    Grid.prototype.getNode = function(x, y, z) {
+      if (this.nodes[x] && this.nodes[x][y] && this.nodes[x][y][z]) {
+        if (this.nodes[x][y][z].full) {
+          return 'full';
+        }
+      } else {
+        return 'out';
+      }
+    };
+
     Grid.prototype.helpGrid = function(pixels) {
       var cube, g, geometry1, material1, x, y, z, _i, _j, _ref, _ref1;
       g = new THREE.Group;
@@ -131,11 +141,12 @@
 
   camera.position.set(WIDTH / 2, HEIGHT / 2, 45);
 
-  console.log(grid);
-
   scene.add(grid.helpGrid(pixelGrid));
 
   Tube = (function() {
+    var DIR;
+
+    DIR = ['right', 'up', 'forward', 'left', 'down', 'backward'];
 
     function Tube(x, y, z) {
       var _ref, _ref1, _ref2;
@@ -154,11 +165,25 @@
       grid.nodes[this.x][this.y][this.z] = 1;
     }
 
+    Tube.prototype.possible_directions = function() {
+      var directions;
+      return directions = [!grid.getNode(this.x + 1, this.y, this.z) ? 'right' : void 0, !grid.getNode(this.x, this.y + 1, this.z) ? 'up' : void 0, !grid.getNode(this.x, this.y, this.z + 1) ? 'forward' : void 0, !grid.getNode(this.x - 1, this.y, this.z) ? 'left' : void 0, !grid.getNode(this.x, this.y - 1, this.z) ? 'down' : void 0, !grid.getNode(this.x, this.y, this.z - 1) ? 'backward' : void 0].filter(Boolean);
+    };
+
+    Tube.prototype.move = function(direction) {
+      if (direction == null) {
+        direction = DIR[Math.round(Math.random() * DIR.length)];
+      }
+      return console.log(direction);
+    };
+
     return Tube;
 
   })();
 
   tube = new Tube(30, 30, 0);
+
+  tube.move();
 
   render = function() {
     return renderer.render(scene, camera);

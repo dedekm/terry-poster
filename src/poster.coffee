@@ -60,6 +60,13 @@ class Grid
       n.push a
     return n
 
+  getNode: (x, y, z) ->
+    if @nodes[x] && @nodes[x][y] && @nodes[x][y][z]
+      'full' if @nodes[x][y][z].full
+    else
+      'out'
+
+
   helpGrid: (pixels) ->
     g = new THREE.Group
     geometry1 = new THREE.BoxGeometry( 0.1, 0.1, 0.1)
@@ -78,11 +85,10 @@ class Grid
 grid = new Grid(WIDTH, HEIGHT, 10)
 camera.position.set( WIDTH/2, HEIGHT/2, 45 )
 
-console.log grid
-
 scene.add(grid.helpGrid(pixelGrid))
 
 class Tube
+  DIR = [ 'right', 'up', 'forward', 'left', 'down', 'backward' ]
   constructor: (@x, @y, @z) ->
     @x ?= Math.round(Math.random() * WIDTH)
     @y ?= Math.round(Math.random() * HEIGHT)
@@ -90,7 +96,23 @@ class Tube
 
     grid.nodes[@x][@y][@z] = 1
 
+  possible_directions: () ->
+    directions = [
+      'right' unless grid.getNode(@x + 1, @y, @z),
+      'up' unless grid.getNode(@x, @y + 1, @z),
+      'forward' unless grid.getNode(@x, @y, @z + 1),
+      'left' unless grid.getNode(@x - 1, @y, @z),
+      'down' unless grid.getNode(@x, @y - 1, @z),
+      'backward' unless grid.getNode(@x, @y, @z - 1)
+    ].filter(Boolean)
+
+  move: (direction) ->
+    direction ?= DIR[Math.round(Math.random()*DIR.length)]
+
+    console.log direction
+
 tube = new Tube(30, 30, 0)
+tube.move()
 
 render = () ->
   renderer.render( scene, camera )
