@@ -44,38 +44,43 @@ renderer.setSize( window.innerWidth, window.innerHeight )
 document.body.appendChild( renderer.domElement )
 renderer.setClearColor(0x000000)
 
-setGrid = (w, h, d) ->
-  g = []
-  for x in [0..w - 1]
-    a = []
-    for y in [0..h - 1]
-      b = []
-      for z in [0..d - 1]
-        b.push {x: x, y: y, z: z, full: false}
-      a.push b
-    g.push a
-  return g
+class Grid
+  constructor: (width, height, depth) ->
+    @nodes = this.setGrid(width, height, depth)
 
-helpGrid = (grid, pixels) ->
-  g = new THREE.Group
-  for x in [0...grid.length]
-    for y in [0...grid[x].length]
-      z = grid[x][y].length - 1
-      if pixels[x][y] != 0
-        material1 = new THREE.MeshBasicMaterial( { color: 0xff0000 } )
-      else
-        material1 = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
-      cube = new THREE.Mesh( geometry1, material1 )
-      cube.position.set(x, y, z)
-      g.add( cube )
-  return g
+  setGrid: (w, h, d) ->
+    n = []
+    for x in [0..w - 1]
+      a = []
+      for y in [0..h - 1]
+        b = []
+        for z in [0..d - 1]
+          b.push {x: x, y: y, z: z, full: false}
+        a.push b
+      n.push a
+    return n
 
-grid = setGrid(WIDTH, HEIGHT, 5)
+  helpGrid: (pixels) ->
+    g = new THREE.Group
+    geometry1 = new THREE.BoxGeometry( 0.1, 0.1, 0.1)
+    for x in [0...@nodes.length]
+      for y in [0...@nodes[x].length]
+        z = @nodes[x][y].length - 1
+        if pixels[x][y] != 0
+          material1 = new THREE.MeshBasicMaterial( { color: 0xff0000 } )
+        else
+          material1 = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
+        cube = new THREE.Mesh( geometry1, material1 )
+        cube.position.set(x, y, z)
+        g.add( cube )
+    return g
+
+grid = new Grid(WIDTH, HEIGHT, 10)
 camera.position.set( WIDTH/2, HEIGHT/2, 45 )
 
-geometry1 = new THREE.BoxGeometry( 0.1, 0.1, 0.1)
+console.log grid
 
-scene.add(helpGrid(grid, pixelGrid))
+scene.add(grid.helpGrid(pixelGrid))
 
 class Tube
   constructor: (@x, @y, @z) ->
@@ -83,9 +88,9 @@ class Tube
     @y ?= Math.round(Math.random() * HEIGHT)
     @z ?= 0
 
-    grid[@x][@y][@z] = 1
+    grid.nodes[@x][@y][@z] = 1
 
-tube = new Tube(30,30,0)
+tube = new Tube(30, 30, 0)
 
 render = () ->
   renderer.render( scene, camera )
