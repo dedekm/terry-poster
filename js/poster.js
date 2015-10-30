@@ -109,6 +109,12 @@
       }
     };
 
+    Grid.prototype.setNode = function(x, y, z, full) {
+      if (this.nodes[x] && this.nodes[x][y] && this.nodes[x][y][z]) {
+        return this.nodes[x][y][z].full = full;
+      }
+    };
+
     Grid.prototype.helpGrid = function(pixels) {
       var cube, g, geometry1, material1, x, y, z, _i, _j, _ref, _ref1;
       g = new THREE.Group;
@@ -144,9 +150,6 @@
   scene.add(grid.helpGrid(pixelGrid));
 
   Tube = (function() {
-    var DIR;
-
-    DIR = ['right', 'up', 'forward', 'left', 'down', 'backward'];
 
     function Tube(x, y, z) {
       var _ref, _ref1, _ref2;
@@ -162,8 +165,23 @@
       if ((_ref2 = this.z) == null) {
         this.z = 0;
       }
-      grid.nodes[this.x][this.y][this.z] = 1;
+      grid.setNode(this.x, this.y, this.z, true);
+      this.path = [
+        {
+          x: this.x,
+          y: this.y,
+          z: this.z
+        }
+      ];
     }
+
+    Tube.prototype.actualPosition = function() {
+      return {
+        x: this.x,
+        y: this.y,
+        z: this.z
+      };
+    };
 
     Tube.prototype.possible_directions = function() {
       var directions;
@@ -171,10 +189,42 @@
     };
 
     Tube.prototype.move = function(direction) {
-      if (direction == null) {
-        direction = DIR[Math.round(Math.random() * DIR.length)];
+      var pd;
+      pd = this.possible_directions();
+      if (pd.length > 0) {
+        if (direction == null) {
+          direction = pd[Math.floor(Math.random() * pd.length)];
+        }
+        console.log(direction);
+        switch (direction) {
+          case 'right':
+            this.x++;
+            break;
+          case 'up':
+            this.y++;
+            break;
+          case 'forward':
+            this.z++;
+            break;
+          case 'left':
+            this.x--;
+            break;
+          case 'down':
+            this.y--;
+            break;
+          case 'backward':
+            this.z--;
+        }
+        grid.setNode(this.x, this.y, this.z, true);
+        this.path.push({
+          x: this.x,
+          y: this.y,
+          z: this.z
+        });
+      } else {
+        console.log('cant move');
       }
-      return console.log(direction);
+      return console.log(this.actualPosition());
     };
 
     return Tube;
@@ -182,6 +232,12 @@
   })();
 
   tube = new Tube(30, 30, 0);
+
+  tube.move();
+
+  tube.move();
+
+  tube.move();
 
   tube.move();
 

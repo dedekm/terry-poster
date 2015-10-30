@@ -66,6 +66,10 @@ class Grid
     else
       'out'
 
+  setNode: (x, y, z, full) ->
+    if @nodes[x] && @nodes[x][y] && @nodes[x][y][z]
+      @nodes[x][y][z].full = full
+
 
   helpGrid: (pixels) ->
     g = new THREE.Group
@@ -88,13 +92,16 @@ camera.position.set( WIDTH/2, HEIGHT/2, 45 )
 scene.add(grid.helpGrid(pixelGrid))
 
 class Tube
-  DIR = [ 'right', 'up', 'forward', 'left', 'down', 'backward' ]
   constructor: (@x, @y, @z) ->
     @x ?= Math.round(Math.random() * WIDTH)
     @y ?= Math.round(Math.random() * HEIGHT)
     @z ?= 0
 
-    grid.nodes[@x][@y][@z] = 1
+    grid.setNode(@x,@y,@z, true)
+    @path = [{x: @x, y: @y, z: @z}]
+
+  actualPosition: () ->
+    {x: @x, y: @y, z:@z}
 
   possible_directions: () ->
     directions = [
@@ -107,11 +114,35 @@ class Tube
     ].filter(Boolean)
 
   move: (direction) ->
-    direction ?= DIR[Math.round(Math.random()*DIR.length)]
+    pd = this.possible_directions()
+    if pd.length > 0
+      direction ?= pd[Math.floor(Math.random()*pd.length)]
+      console.log direction
+      switch direction
+        when 'right'
+          @x++
+        when 'up'
+          @y++
+        when 'forward'
+          @z++
+        when 'left'
+          @x--
+        when 'down'
+          @y--
+        when 'backward'
+          @z--
 
-    console.log direction
+      grid.setNode(@x,@y,@z, true)
+      @path.push({x: @x, y: @y, z: @z})
+    else
+      console.log 'cant move'
+
+    console.log this.actualPosition()
 
 tube = new Tube(30, 30, 0)
+tube.move()
+tube.move()
+tube.move()
 tube.move()
 
 render = () ->
