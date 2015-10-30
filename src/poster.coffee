@@ -1,7 +1,9 @@
+WIDTH = 40
+HEIGHT = 40
+
 canvas = document.createElement('canvas')
-canvas.id = 'canvas'
-canvas.width = 40
-canvas.height = 40
+canvas.width = WIDTH
+canvas.height = HEIGHT
 document.body.appendChild(canvas)
 ctx = canvas.getContext("2d")
 
@@ -30,6 +32,7 @@ getData = (content) ->
   return p
 
 pixelGrid = getData(ctx)
+document.body.removeChild(canvas)
 
 
 scene = new THREE.Scene()
@@ -67,12 +70,22 @@ helpGrid = (grid, pixels) ->
       g.add( cube )
   return g
 
-grid = setGrid(40, 40, 5)
-camera.position.set( 20, 20, 45 )
+grid = setGrid(WIDTH, HEIGHT, 5)
+camera.position.set( WIDTH/2, HEIGHT/2, 45 )
 
 geometry1 = new THREE.BoxGeometry( 0.1, 0.1, 0.1)
 
 scene.add(helpGrid(grid, pixelGrid))
+
+class Tube
+  constructor: (@x, @y, @z) ->
+    @x ?= Math.round(Math.random() * WIDTH)
+    @y ?= Math.round(Math.random() * HEIGHT)
+    @z ?= 0
+
+    grid[@x][@y][@z] = 1
+
+tube = new Tube(30,30,0)
 
 render = () ->
   renderer.render( scene, camera )
