@@ -1,5 +1,6 @@
 WIDTH = 40
 HEIGHT = 40
+DEPTH = 10
 MATERIAL = new THREE.MeshDepthMaterial()
 
 
@@ -38,7 +39,7 @@ document.body.removeChild(canvas)
 
 
 scene = new THREE.Scene()
-camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 20, 55 )
+camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 24, 50 )
 scene = new THREE.Scene()
 
 renderer = new THREE.WebGLRenderer ({logarithmicDepthBuffer: true } )
@@ -78,7 +79,7 @@ class Grid
     geometry1 = new THREE.BoxGeometry( 0.1, 0.1, 0.1)
     for x in [0...@nodes.length]
       for y in [0...@nodes[x].length]
-        z = @nodes[x][y].length - 1
+        z = @nodes[x][y].length - 2
         if pixels[x][y] != 0
           material1 = new THREE.MeshBasicMaterial( { color: 0xff0000 } )
         else
@@ -88,7 +89,7 @@ class Grid
         g.add( cube )
     return g
 
-grid = new Grid(WIDTH, HEIGHT, 10)
+grid = new Grid(WIDTH, HEIGHT, DEPTH)
 camera.position.set( WIDTH/2, HEIGHT/2, 45 )
 
 scene.add(grid.helpGrid(pixelGrid))
@@ -106,6 +107,7 @@ class Tube
     new THREE.Vector3(@x, @y, @z)
 
   possible_directions: () ->
+    # FIXME: pixelGrid out of range
     preferable = [
       'right' if pixelGrid[@x + 1][@y] > 0,
       'up' if pixelGrid[@x][@y + 1] > 0,
@@ -113,15 +115,23 @@ class Tube
       'left' if pixelGrid[@x - 1][@y] > 0,
       'down' if pixelGrid[@x][@y - 1] > 0
     ].filter(Boolean)
+    preferable = ['forward'] if pixelGrid[@x][@y] > 0 && @z < DEPTH - DEPTH/3
+    preferable = ['backward'] if pixelGrid[@x][@y] == 0 && @z > DEPTH / 2
+
     directions = [
       'right' unless grid.getNode(@x + 1, @y, @z),
       'up' unless grid.getNode(@x, @y + 1, @z),
-      'forward' unless grid.getNode(@x, @y, @z + 1),
+      'forward' if not grid.getNode(@x, @y, @z + 1) or (@z > DEPTH / 2 && pixelGrid[@x][@y] == 0),
       'left' unless grid.getNode(@x - 1, @y, @z),
       'down' unless grid.getNode(@x, @y - 1, @z),
       'backward' unless grid.getNode(@x, @y, @z - 1)
     ].filter(Boolean)
-    (direction for direction in directions when direction in preferable)
+
+    preferable_directions = (direction for direction in directions when direction in preferable)
+    if preferable_directions.length > 0
+      preferable_directions
+    else
+      directions
 
   move: (direction) ->
     pd = this.possible_directions()
@@ -157,8 +167,10 @@ class Tube
     )
     tube = new THREE.Mesh( geometry, MATERIAL )
 
-tube = new Tube(30, 30, 0)
-tube.move() for [1..100]
+tube = new Tube(4, 5, 5)
+
+for [1..50]
+  tube.move()
 
 scene.add(tube.createTube())
 
