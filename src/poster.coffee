@@ -166,4 +166,10 @@ scene.add(tube.createTube())
 render = () ->
   renderer.render( scene, camera )
 
+appendChild = () ->
+  imgData = renderer.domElement.toDataURL()
+  imgNode = document.createElement("img")
+  imgNode.src = imgData
+  document.body.appendChild(imgNode)
+
 render()
