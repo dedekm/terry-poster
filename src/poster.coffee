@@ -106,6 +106,13 @@ class Tube
     new THREE.Vector3(@x, @y, @z)
 
   possible_directions: () ->
+    preferable = [
+      'right' if pixelGrid[@x + 1][@y] > 0,
+      'up' if pixelGrid[@x][@y + 1] > 0,
+      'forward' if pixelGrid[@x][@y] > 0,
+      'left' if pixelGrid[@x - 1][@y] > 0,
+      'down' if pixelGrid[@x][@y - 1] > 0
+    ].filter(Boolean)
     directions = [
       'right' unless grid.getNode(@x + 1, @y, @z),
       'up' unless grid.getNode(@x, @y + 1, @z),
@@ -114,6 +121,7 @@ class Tube
       'down' unless grid.getNode(@x, @y - 1, @z),
       'backward' unless grid.getNode(@x, @y, @z - 1)
     ].filter(Boolean)
+    (direction for direction in directions when direction in preferable)
 
   move: (direction) ->
     pd = this.possible_directions()
@@ -150,7 +158,7 @@ class Tube
     tube = new THREE.Mesh( geometry, MATERIAL )
 
 tube = new Tube(30, 30, 0)
-tube.move() for [1..50]
+tube.move() for [1..100]
 
 scene.add(tube.createTube())
 
