@@ -1,5 +1,7 @@
 WIDTH = 40
 HEIGHT = 40
+MATERIAL = new THREE.MeshDepthMaterial()
+
 
 canvas = document.createElement('canvas')
 canvas.width = WIDTH
@@ -36,7 +38,7 @@ document.body.removeChild(canvas)
 
 
 scene = new THREE.Scene()
-camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100 )
+camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 20, 55 )
 scene = new THREE.Scene()
 
 renderer = new THREE.WebGLRenderer ({logarithmicDepthBuffer: true } )
@@ -98,10 +100,10 @@ class Tube
     @z ?= 0
 
     grid.setNode(@x,@y,@z, true)
-    @path = [{x: @x, y: @y, z: @z}]
+    @path = [this.actualPosition()]
 
   actualPosition: () ->
-    {x: @x, y: @y, z:@z}
+    new THREE.Vector3(@x, @y, @z)
 
   possible_directions: () ->
     directions = [
@@ -117,7 +119,6 @@ class Tube
     pd = this.possible_directions()
     if pd.length > 0
       direction ?= pd[Math.floor(Math.random()*pd.length)]
-      console.log direction
       switch direction
         when 'right'
           @x++
@@ -133,17 +134,26 @@ class Tube
           @z--
 
       grid.setNode(@x,@y,@z, true)
-      @path.push({x: @x, y: @y, z: @z})
+      @path.push(this.actualPosition())
     else
       console.log 'cant move'
 
-    console.log this.actualPosition()
+  createTube: () ->
+    curve = new THREE.SplineCurve3(@path)
+    geometry = new THREE.TubeGeometry(
+      curve, #path
+      @path.length * 3, #segments
+      0.45, #radius
+      8, #radiusSegments
+      false #closed
+    )
+    tube = new THREE.Mesh( geometry, MATERIAL )
 
 tube = new Tube(30, 30, 0)
-tube.move()
-tube.move()
-tube.move()
-tube.move()
+tube.move() for [1..50]
+
+scene.add(tube.createTube())
+
 
 render = () ->
   renderer.render( scene, camera )
