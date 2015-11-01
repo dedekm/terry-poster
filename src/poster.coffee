@@ -104,7 +104,7 @@ window.init = () ->
       )
       tube = new THREE.Mesh( geometry, MATERIAL )
 
-  scene.add(grid.helpGrid(pixelGrid.pixels))
+  # scene.add(grid.helpGrid(pixelGrid.pixels))
 
   n = 10
   tubes = []
@@ -117,17 +117,23 @@ window.init = () ->
     for tube in tubes
       tube.move()
 
-  # group = new THREE.Group()
-  # for tube in tubes
-  #   group.add(tube.createTube())
-  #
-  # scene.add(group)
+  group = new THREE.Group()
+  for tube in tubes
+    group.add(tube.createTube())
+
+  scene.add(group)
 
   renderPDF= () ->
     dataURL = renderer.domElement.toDataURL()
     doc = new jsPDF('p', 'mm', 'b1-poster')
-    doc.text(20, 20, 'Hello world.')
     doc.addImage(dataURL, 'PNG', 8, 8, 708, 1008)
+
+    doc.setFont("monospace", "bold")
+    doc.setFontSize(12)
+    doc.setTextColor(255,255,255)
+    s = strings.join("") + ' poster generated for Terry posters by software licensed under the MIT licence'
+    doc.text(30, 980, s )
+
     for i in [{c: 255, w: 1.5}, {c: 0, w: 0.5}]
       doc.setDrawColor(i.c,i.c,i.c)
       doc.setLineWidth(i.w)

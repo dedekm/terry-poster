@@ -3,7 +3,7 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   window.init = function() {
-    var Tube, appendChild, camera, canvas, ctx, grid, i, j, k, l, len, len1, m, n, o, pixelGrid, ref, ref1, render, renderPDF, renderer, s, scene, strings, tube, tubes, x, y;
+    var Tube, appendChild, camera, canvas, ctx, grid, group, i, j, k, l, len, len1, len2, m, n, o, p, pixelGrid, ref, ref1, render, renderPDF, renderer, s, scene, strings, tube, tubes, x, y;
     canvas = document.createElement('canvas');
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
@@ -123,7 +123,6 @@
       return Tube;
 
     })();
-    scene.add(grid.helpGrid(pixelGrid.pixels));
     n = 10;
     tubes = [];
     for (x = k = 0, ref = WIDTH / n; 0 <= ref ? k < ref : k > ref; x = 0 <= ref ? ++k : --k) {
@@ -139,12 +138,22 @@
         tube.move();
       }
     }
+    group = new THREE.Group();
+    for (p = 0, len2 = tubes.length; p < len2; p++) {
+      tube = tubes[p];
+      group.add(tube.createTube());
+    }
+    scene.add(group);
     renderPDF = function() {
-      var dataURL, doc, len2, p, ref2;
+      var dataURL, doc, len3, q, ref2;
       dataURL = renderer.domElement.toDataURL();
       doc = new jsPDF('p', 'mm', 'b1-poster');
-      doc.text(20, 20, 'Hello world.');
       doc.addImage(dataURL, 'PNG', 8, 8, 708, 1008);
+      doc.setFont("monospace", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(255, 255, 255);
+      s = strings.join("") + ' poster generated for Terry posters by software licensed under the MIT licence';
+      doc.text(30, 980, s);
       ref2 = [
         {
           c: 255,
@@ -154,8 +163,8 @@
           w: 0.5
         }
       ];
-      for (p = 0, len2 = ref2.length; p < len2; p++) {
-        i = ref2[p];
+      for (q = 0, len3 = ref2.length; q < len3; q++) {
+        i = ref2[q];
         doc.setDrawColor(i.c, i.c, i.c);
         doc.setLineWidth(i.w);
         doc.line(12, 0, 12, 9);
