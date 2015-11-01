@@ -9,15 +9,16 @@ window.init = () ->
     this.value
     ).get()
 
-  ctx.font = "30px Arial"
+  ctx.font = "25px Arial"
   ctx.fillStyle = "#000000"
   ctx.textAlign="center"
 
   for s, i in strings
-    ctx.fillText(s, WIDTH/2, 30 + i* 30)
+    ctx.fillText(s.split("").join(String.fromCharCode(8202)), WIDTH/2, 30 + i* 30)
 
   pixelGrid = new PixelGrid(ctx)
-  # document.body.removeChild(canvas)
+  document.body.removeChild(canvas)
+  $('#input').remove()
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 24, 50 )
@@ -25,7 +26,7 @@ window.init = () ->
 
   renderer = new THREE.WebGLRenderer ({logarithmicDepthBuffer: true } )
   renderer.setSize( window.innerWidth, window.innerHeight )
-  # document.body.appendChild( renderer.domElement )
+  document.body.appendChild( renderer.domElement )
   renderer.setClearColor(0x000000)
 
   grid = new Grid(WIDTH, HEIGHT, DEPTH)
@@ -122,6 +123,5 @@ window.init = () ->
     imgNode.src = imgData
     document.body.appendChild(imgNode)
 
-  # render()
-
+  render()
 init()

@@ -12,14 +12,16 @@
     strings = $('#input input').map(function(iput) {
       return this.value;
     }).get();
-    ctx.font = "30px Arial";
+    ctx.font = "25px Arial";
     ctx.fillStyle = "#000000";
     ctx.textAlign = "center";
     for (i = j = 0, len = strings.length; j < len; i = ++j) {
       s = strings[i];
-      ctx.fillText(s, WIDTH / 2, 30 + i * 30);
+      ctx.fillText(s.split("").join(String.fromCharCode(8202)), WIDTH / 2, 30 + i * 30);
     }
     pixelGrid = new PixelGrid(ctx);
+    document.body.removeChild(canvas);
+    $('#input').remove();
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 24, 50);
     scene = new THREE.Scene();
@@ -27,6 +29,7 @@
       logarithmicDepthBuffer: true
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
     renderer.setClearColor(0x000000);
     grid = new Grid(WIDTH, HEIGHT, DEPTH);
     camera.position.set(WIDTH / 2, HEIGHT / 2, 45);
@@ -131,13 +134,14 @@
     render = function() {
       return renderer.render(scene, camera);
     };
-    return appendChild = function() {
+    appendChild = function() {
       var imgData, imgNode;
       imgData = renderer.domElement.toDataURL();
       imgNode = document.createElement("img");
       imgNode.src = imgData;
       return document.body.appendChild(imgNode);
     };
+    return render();
   };
 
   init();
