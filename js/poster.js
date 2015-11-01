@@ -3,7 +3,7 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   window.init = function() {
-    var Tube, appendChild, camera, canvas, ctx, grid, group, i, j, k, l, len, len1, len2, m, n, o, p, pixelGrid, ref, ref1, render, renderPDF, renderer, s, scene, strings, tube, tubes, x, y;
+    var Tube, appendChild, camera, canvas, ctx, grid, i, j, k, l, len, len1, m, n, o, pixelGrid, ref, ref1, render, renderPDF, renderer, s, scene, strings, tube, tubes, x, y;
     canvas = document.createElement('canvas');
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
@@ -139,23 +139,40 @@
         tube.move();
       }
     }
-    group = new THREE.Group();
-    for (p = 0, len2 = tubes.length; p < len2; p++) {
-      tube = tubes[p];
-      group.add(tube.createTube());
-    }
-    scene.add(group);
     renderPDF = function() {
-      var dataURL, doc;
+      var dataURL, doc, len2, p, ref2;
       dataURL = renderer.domElement.toDataURL();
-      doc = new jsPDF('p', 'mm', 'b1');
+      doc = new jsPDF('p', 'mm', 'b1-poster');
       doc.text(20, 20, 'Hello world.');
-      doc.addImage(dataURL, 'PNG', 0, 0, 700, 1000);
+      doc.addImage(dataURL, 'PNG', 8, 8, 708, 1008);
+      ref2 = [
+        {
+          c: 255,
+          w: 1.5
+        }, {
+          c: 0,
+          w: 0.5
+        }
+      ];
+      for (p = 0, len2 = ref2.length; p < len2; p++) {
+        i = ref2[p];
+        doc.setDrawColor(i.c, i.c, i.c);
+        doc.setLineWidth(i.w);
+        doc.line(12, 0, 12, 9);
+        doc.line(0, 12, 9, 12);
+        doc.line(712, 0, 712, 9);
+        doc.line(715, 12, 724, 12);
+        doc.line(712, 1015, 712, 1024);
+        doc.line(715, 1012, 724, 1012);
+        doc.line(0, 1012, 9, 1012);
+        doc.line(12, 1015, 12, 1024);
+      }
       return doc.save('Test.pdf');
     };
     render = function() {
       renderer.render(scene, camera);
-      return appendChild();
+      appendChild();
+      return renderPDF();
     };
     appendChild = function() {
       var imgData, imgNode;

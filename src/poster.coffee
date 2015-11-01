@@ -117,23 +117,40 @@ window.init = () ->
     for tube in tubes
       tube.move()
 
-  group = new THREE.Group()
-  for tube in tubes
-    group.add(tube.createTube())
-
-  scene.add(group)
+  # group = new THREE.Group()
+  # for tube in tubes
+  #   group.add(tube.createTube())
+  #
+  # scene.add(group)
 
   renderPDF= () ->
     dataURL = renderer.domElement.toDataURL()
-    doc = new jsPDF('p', 'mm', 'b1')
+    doc = new jsPDF('p', 'mm', 'b1-poster')
     doc.text(20, 20, 'Hello world.')
-    doc.addImage(dataURL, 'PNG', 0, 0, 700, 1000)
+    doc.addImage(dataURL, 'PNG', 8, 8, 708, 1008)
+    for i in [{c: 255, w: 1.5}, {c: 0, w: 0.5}]
+      doc.setDrawColor(i.c,i.c,i.c)
+      doc.setLineWidth(i.w)
+      doc.line(12, 0, 12, 9)
+      doc.line(0, 12, 9, 12)
+
+      doc.line(712, 0, 712, 9)
+      doc.line(715, 12, 724, 12)
+
+      doc.line(712, 1015, 712, 1024)
+      doc.line(715, 1012, 724, 1012)
+
+      doc.line(0, 1012, 9, 1012)
+      doc.line(12, 1015, 12, 1024)
+
+
     doc.save('Test.pdf')
+    # doc.output('dataurlstring', 'Test.pdf')
 
   render = () ->
     renderer.render( scene, camera )
     appendChild()
-    # renderPDF()
+    renderPDF()
 
   appendChild = () ->
     imgData = renderer.domElement.toDataURL()

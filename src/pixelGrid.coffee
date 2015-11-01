@@ -13,7 +13,6 @@ class window.PixelGrid
       @pixels[x] = []
       for y in [0...h]
         @pixels[x].push( 0 )
-    console.log @pixels
     for x in [0...w]
       for y in [0...h]
         d = x + (w * h - w ) - (y * w)

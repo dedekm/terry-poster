@@ -21,7 +21,6 @@
           this.pixels[x].push(0);
         }
       }
-      console.log(this.pixels);
       for (x = m = 0, ref2 = w; 0 <= ref2 ? m < ref2 : m > ref2; x = 0 <= ref2 ? ++m : --m) {
         for (y = n = 0, ref3 = h; 0 <= ref3 ? n < ref3 : n > ref3; y = 0 <= ref3 ? ++n : --n) {
           d = x + (w * h - w) - (y * w);
