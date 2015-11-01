@@ -3,7 +3,7 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   window.init = function() {
-    var Tube, appendChild, camera, canvas, ctx, grid, group, i, j, k, l, len, len1, len2, m, n, o, p, pixelGrid, ref, ref1, render, renderPDF, renderer, s, scene, strings, tube, tubes, x, y;
+    var Tube, appendChild, bufferGeometry, camera, canvas, ctx, grid, group, i, j, k, l, len, len1, len2, m, mesh, n, o, p, pixelGrid, ref, ref1, render, renderPDF, renderer, s, scene, strings, tube, tubes, x, y;
     canvas = document.createElement('canvas');
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
@@ -114,10 +114,9 @@
       };
 
       Tube.prototype.createTube = function() {
-        var curve, geometry, tube;
+        var curve, geometry;
         curve = new THREE.SplineCurve3(this.path);
-        geometry = new THREE.TubeGeometry(curve, this.path.length * 3, 0.45, 8, false);
-        return tube = new THREE.Mesh(geometry, MATERIAL);
+        return geometry = new THREE.TubeGeometry(curve, this.path.length * 3, 0.45, 8, false);
       };
 
       return Tube;
@@ -132,18 +131,20 @@
         }
       }
     }
-    for (m = 0; m <= 10; m++) {
+    for (m = 0; m <= 20; m++) {
       for (o = 0, len1 = tubes.length; o < len1; o++) {
         tube = tubes[o];
         tube.move();
       }
     }
-    group = new THREE.Group();
+    group = new THREE.Geometry();
     for (p = 0, len2 = tubes.length; p < len2; p++) {
       tube = tubes[p];
-      group.add(tube.createTube());
+      group.merge(tube.createTube());
     }
-    scene.add(group);
+    bufferGeometry = new THREE.BufferGeometry().fromGeometry(group);
+    mesh = new THREE.Mesh(bufferGeometry, MATERIAL);
+    scene.add(mesh);
     renderPDF = function() {
       var dataURL, doc, len3, q, ref2;
       dataURL = renderer.domElement.toDataURL();
@@ -180,8 +181,7 @@
     };
     render = function() {
       renderer.render(scene, camera);
-      appendChild();
-      return renderPDF();
+      return appendChild();
     };
     appendChild = function() {
       var imgData, imgNode;

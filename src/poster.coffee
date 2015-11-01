@@ -102,7 +102,7 @@ window.init = () ->
         8, #radiusSegments
         false #closed
       )
-      tube = new THREE.Mesh( geometry, MATERIAL )
+      # tube = new THREE.Mesh( geometry, MATERIAL )
 
   # scene.add(grid.helpGrid(pixelGrid.pixels))
 
@@ -113,15 +113,17 @@ window.init = () ->
       unless grid.getNode(x* n,y * n,2) == 'full'
         tubes.push new Tube(x * n,y * n,2)
 
-  for [0..10]
+  for [0..20]
     for tube in tubes
       tube.move()
 
-  group = new THREE.Group()
+  group = new THREE.Geometry()
   for tube in tubes
-    group.add(tube.createTube())
+    group.merge(tube.createTube())
 
-  scene.add(group)
+  bufferGeometry = new THREE.BufferGeometry().fromGeometry( group )
+  mesh = new THREE.Mesh( bufferGeometry, MATERIAL )
+  scene.add(mesh)
 
   renderPDF= () ->
     dataURL = renderer.domElement.toDataURL()
@@ -156,7 +158,7 @@ window.init = () ->
   render = () ->
     renderer.render( scene, camera )
     appendChild()
-    renderPDF()
+    # renderPDF()
 
   appendChild = () ->
     imgData = renderer.domElement.toDataURL()
