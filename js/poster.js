@@ -3,7 +3,7 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   window.init = function() {
-    var Tube, appendChild, camera, canvas, ctx, grid, i, j, k, len, pixelGrid, render, renderPDF, renderer, s, scene, strings, tube;
+    var Tube, appendChild, camera, canvas, ctx, grid, group, i, j, k, l, len, len1, len2, m, n, o, p, pixelGrid, ref, ref1, render, renderPDF, renderer, s, scene, strings, tube, tubes, x, y;
     canvas = document.createElement('canvas');
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
@@ -17,27 +17,25 @@
     ctx.textAlign = "center";
     for (i = j = 0, len = strings.length; j < len; i = ++j) {
       s = strings[i];
-      ctx.fillText(s.split("").join(String.fromCharCode(8202)), WIDTH / 2, 30 + i * 30);
+      ctx.fillText(s.split("").join(String.fromCharCode(8202)), WIDTH / 2, 40 + i * 25);
     }
     pixelGrid = new PixelGrid(ctx);
     document.body.removeChild(canvas);
     $('#input').remove();
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 24, 50);
+    camera = new THREE.PerspectiveCamera(100, WIDTH / HEIGHT, 24, 50);
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer({
       logarithmicDepthBuffer: true
     });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    renderer.setSize(WIDTH * 10, HEIGHT * 10);
     renderer.setClearColor(0x000000);
     grid = new Grid(WIDTH, HEIGHT, DEPTH);
     camera.position.set(WIDTH / 2, HEIGHT / 2, 45);
-    scene.add(grid.helpGrid(pixelGrid.pixels));
     Tube = (function() {
-      function Tube(x, y, z) {
-        this.x = x;
-        this.y = y;
+      function Tube(x1, y1, z) {
+        this.x = x1;
+        this.y = y1;
         this.z = z;
         if (this.x == null) {
           this.x = Math.round(Math.random() * WIDTH);
@@ -62,10 +60,10 @@
         if (pixelGrid.getPixel(this.x, this.y) > 0 && this.z < DEPTH - DEPTH / 3) {
           preferable = ['forward'];
         }
-        if (pixelGrid.getPixel(this.x, this.y) === 0 && this.z > DEPTH / 2) {
+        if (pixelGrid.getPixel(this.x, this.y) === 0 && this.z > DEPTH / 3) {
           preferable = ['backward'];
         }
-        directions = [!grid.getNode(this.x + 1, this.y, this.z) ? 'right' : void 0, !grid.getNode(this.x, this.y + 1, this.z) ? 'up' : void 0, !grid.getNode(this.x, this.y, this.z + 1) || (this.z > DEPTH / 2 && pixelGrid.getPixel(this.x, this.y) === 0) ? 'forward' : void 0, !grid.getNode(this.x - 1, this.y, this.z) ? 'left' : void 0, !grid.getNode(this.x, this.y - 1, this.z) ? 'down' : void 0, !grid.getNode(this.x, this.y, this.z - 1) ? 'backward' : void 0].filter(Boolean);
+        directions = [!grid.getNode(this.x + 1, this.y, this.z) ? 'right' : void 0, !grid.getNode(this.x, this.y + 1, this.z) ? 'up' : void 0, !grid.getNode(this.x, this.y, this.z + 1) || (this.z > DEPTH / 3 && pixelGrid.getPixel(this.x, this.y) === 0) ? 'forward' : void 0, !grid.getNode(this.x - 1, this.y, this.z) ? 'left' : void 0, !grid.getNode(this.x, this.y - 1, this.z) ? 'down' : void 0, !grid.getNode(this.x, this.y, this.z - 1) ? 'backward' : void 0].filter(Boolean);
         preferable_directions = (function() {
           var k, len1, results;
           results = [];
@@ -112,8 +110,6 @@
           }
           grid.setNode(this.x, this.y, this.z, true);
           return this.path.push(this.actualPosition());
-        } else {
-          return console.log('cant move');
         }
       };
 
@@ -127,10 +123,28 @@
       return Tube;
 
     })();
-    tube = new Tube(4, 5, 5);
-    for (k = 1; k <= 50; k++) {
-      tube.move();
+    scene.add(grid.helpGrid(pixelGrid.pixels));
+    n = 10;
+    tubes = [];
+    for (x = k = 0, ref = WIDTH / n; 0 <= ref ? k < ref : k > ref; x = 0 <= ref ? ++k : --k) {
+      for (y = l = 0, ref1 = HEIGHT / n; 0 <= ref1 ? l < ref1 : l > ref1; y = 0 <= ref1 ? ++l : --l) {
+        if (grid.getNode(x * n, y * n, 2) !== 'full') {
+          tubes.push(new Tube(x * n, y * n, 2));
+        }
+      }
     }
+    for (m = 0; m <= 10; m++) {
+      for (o = 0, len1 = tubes.length; o < len1; o++) {
+        tube = tubes[o];
+        tube.move();
+      }
+    }
+    group = new THREE.Group();
+    for (p = 0, len2 = tubes.length; p < len2; p++) {
+      tube = tubes[p];
+      group.add(tube.createTube());
+    }
+    scene.add(group);
     renderPDF = function() {
       var dataURL, doc;
       dataURL = renderer.domElement.toDataURL();
@@ -140,7 +154,8 @@
       return doc.save('Test.pdf');
     };
     render = function() {
-      return renderer.render(scene, camera);
+      renderer.render(scene, camera);
+      return appendChild();
     };
     appendChild = function() {
       var imgData, imgNode;
