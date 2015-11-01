@@ -6,6 +6,8 @@
 
   window.DEPTH = 8;
 
-  window.MATERIAL = new THREE.MeshDepthMaterial();
+  window.MATERIAL = new THREE.MeshDepthMaterial({
+    side: THREE.DoubleSide
+  });
 
 }).call(this);
