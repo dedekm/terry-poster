@@ -113,9 +113,16 @@ window.init = () ->
 
   # scene.add(tube.createTube())
 
+  renderPDF= () ->
+    dataURL = renderer.domElement.toDataURL()
+    doc = new jsPDF('p', 'mm', 'b1')
+    doc.text(20, 20, 'Hello world.')
+    doc.addImage(dataURL, 'PNG', 0, 0, 700, 1000)
+    doc.save('Test.pdf')
 
   render = () ->
     renderer.render( scene, camera )
+    # renderPDF()
 
   appendChild = () ->
     imgData = renderer.domElement.toDataURL()
@@ -124,4 +131,6 @@ window.init = () ->
     document.body.appendChild(imgNode)
 
   render()
+
+
 init()

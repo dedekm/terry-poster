@@ -3,7 +3,7 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   window.init = function() {
-    var Tube, appendChild, camera, canvas, ctx, grid, i, j, k, len, pixelGrid, render, renderer, s, scene, strings, tube;
+    var Tube, appendChild, camera, canvas, ctx, grid, i, j, k, len, pixelGrid, render, renderPDF, renderer, s, scene, strings, tube;
     canvas = document.createElement('canvas');
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
@@ -131,6 +131,14 @@
     for (k = 1; k <= 50; k++) {
       tube.move();
     }
+    renderPDF = function() {
+      var dataURL, doc;
+      dataURL = renderer.domElement.toDataURL();
+      doc = new jsPDF('p', 'mm', 'b1');
+      doc.text(20, 20, 'Hello world.');
+      doc.addImage(dataURL, 'PNG', 0, 0, 700, 1000);
+      return doc.save('Test.pdf');
+    };
     render = function() {
       return renderer.render(scene, camera);
     };
