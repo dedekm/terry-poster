@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Poster</title>
   <script src="lib/three.min.js"></script>
+  <script src="lib/jquery-2.1.4.min.js" charset="utf-8"></script>
   <style media="screen">
     input {
       text-align: center;
@@ -20,10 +21,12 @@
 
 <body>
   <div id="input">
-    <input type="text" name="line1" maxlength="3" width="30px">
-    <input type="text" name="line2" maxlength="3" width="30px">
-    <input type="text" name="line3" maxlength="3" width="30px">
-    <button type="button" name="button" id="button">OK</button>
+    <form>
+      <input type="text" name="line1" maxlength="3" width="30px" value="MA">
+      <input type="text" name="line2" maxlength="3" width="30px" value="TR">
+      <input type="text" name="line3" maxlength="3" width="30px" value="X">
+      <button type="button" name="button" id="button" onclick="init()">OK</button>
+    </form>
   </div>
   <script src="js/constants.js" charset="utf-8"></script>
   <script src="js/pixelGrid.js" charset="utf-8"></script>
