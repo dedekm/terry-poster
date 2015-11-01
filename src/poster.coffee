@@ -13,28 +13,34 @@ ctx = canvas.getContext("2d")
 ctx.font = "35px Georgia"
 ctx.fillStyle = "#000000"
 ctx.fillText("M", 3, 35)
+class pixelGrid
+  constructor: (content) ->
+    imageData = content.getImageData(0, 0, content.canvas.width, content.canvas.height)
+    data = imageData.data
+    bw = []
+    for d, i in data
+      bw.push(d) if i % 4 == 3
 
-getData = (content) ->
-  imageData = content.getImageData(0, 0, content.canvas.width, content.canvas.height)
-  data = imageData.data
-  bw = []
-  for d, i in data
-    bw.push(d) if i % 4 == 3
+    w = bw.length / canvas.width
+    h = bw.length / canvas.height
+    @pixels = new Array(w)
+    for x in [0...w]
+      @pixels[x] = []
+      for y in [0...h]
+        @pixels[x].push( 0 )
+    for x in [0...w]
+      for y in [0...h]
+        d = x + (w * h - w ) - (y * h)
+        @pixels[x][y] = bw[d]
 
-  w = bw.length / canvas.width
-  h = bw.length / canvas.height
-  p = new Array(w)
-  for x in [0...w]
-    p[x] = []
-    for y in [0...h]
-      p[x].push( 0 )
-  for x in [0...w]
-    for y in [0...h]
-      d = x + (w * h - w ) - (y * h)
-      p[x][y] = bw[d]
-  return p
+  getPixel: (x, y) ->
+    if @pixels[x] && @pixels[x][y]
+      @pixels[x][y]
+    else
+      0
 
-pixelGrid = getData(ctx)
+
+pixelGrid = new pixelGrid(ctx)
 document.body.removeChild(canvas)
 
 
@@ -92,7 +98,7 @@ class Grid
 grid = new Grid(WIDTH, HEIGHT, DEPTH)
 camera.position.set( WIDTH/2, HEIGHT/2, 45 )
 
-scene.add(grid.helpGrid(pixelGrid))
+scene.add(grid.helpGrid(pixelGrid.pixels))
 
 class Tube
   constructor: (@x, @y, @z) ->
@@ -107,21 +113,20 @@ class Tube
     new THREE.Vector3(@x, @y, @z)
 
   possible_directions: () ->
-    # FIXME: pixelGrid out of range
     preferable = [
-      'right' if pixelGrid[@x + 1][@y] > 0,
-      'up' if pixelGrid[@x][@y + 1] > 0,
-      'forward' if pixelGrid[@x][@y] > 0,
-      'left' if pixelGrid[@x - 1][@y] > 0,
-      'down' if pixelGrid[@x][@y - 1] > 0
+      'right' if pixelGrid.getPixel(@x + 1, @y) > 0,
+      'up' if pixelGrid.getPixel(@x,@y + 1) > 0,
+      'forward' if pixelGrid.getPixel(@x, @y) > 0,
+      'left' if pixelGrid.getPixel(@x - 1,@y) > 0,
+      'down' if pixelGrid.getPixel(@x,@y - 1) > 0
     ].filter(Boolean)
-    preferable = ['forward'] if pixelGrid[@x][@y] > 0 && @z < DEPTH - DEPTH/3
-    preferable = ['backward'] if pixelGrid[@x][@y] == 0 && @z > DEPTH / 2
+    preferable = ['forward'] if pixelGrid.getPixel(@x, @y) > 0 && @z < DEPTH - DEPTH/3
+    preferable = ['backward'] if pixelGrid.getPixel(@x, @y) == 0 && @z > DEPTH / 2
 
     directions = [
       'right' unless grid.getNode(@x + 1, @y, @z),
       'up' unless grid.getNode(@x, @y + 1, @z),
-      'forward' if not grid.getNode(@x, @y, @z + 1) or (@z > DEPTH / 2 && pixelGrid[@x][@y] == 0),
+      'forward' if not grid.getNode(@x, @y, @z + 1) or (@z > DEPTH / 2 && pixelGrid.getPixel(@x, @y) == 0),
       'left' unless grid.getNode(@x - 1, @y, @z),
       'down' unless grid.getNode(@x, @y - 1, @z),
       'backward' unless grid.getNode(@x, @y, @z - 1)
