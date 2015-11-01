@@ -5,7 +5,7 @@
 
   WIDTH = 40;
 
-  HEIGHT = 40;
+  HEIGHT = 90;
 
   DEPTH = 10;
 
@@ -39,8 +39,8 @@
           bw.push(d);
         }
       }
-      w = bw.length / canvas.width;
-      h = bw.length / canvas.height;
+      w = WIDTH;
+      h = HEIGHT;
       this.pixels = new Array(w);
       for (x = k = 0, ref = w; 0 <= ref ? k < ref : k > ref; x = 0 <= ref ? ++k : --k) {
         this.pixels[x] = [];
@@ -48,9 +48,10 @@
           this.pixels[x].push(0);
         }
       }
+      console.log(this.pixels);
       for (x = m = 0, ref2 = w; 0 <= ref2 ? m < ref2 : m > ref2; x = 0 <= ref2 ? ++m : --m) {
         for (y = o = 0, ref3 = h; 0 <= ref3 ? o < ref3 : o > ref3; y = 0 <= ref3 ? ++o : --o) {
-          d = x + (w * h - w) - (y * h);
+          d = x + (w * h - w) - (y * w);
           this.pixels[x][y] = bw[d];
         }
       }
@@ -70,11 +71,9 @@
 
   pixelGrid = new pixelGrid(ctx);
 
-  document.body.removeChild(canvas);
-
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 24, 50);
+  camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 24, 50);
 
   scene = new THREE.Scene();
 
@@ -264,8 +263,6 @@
   for (j = 1; j <= 50; j++) {
     tube.move();
   }
-
-  scene.add(tube.createTube());
 
   render = function() {
     return renderer.render(scene, camera);

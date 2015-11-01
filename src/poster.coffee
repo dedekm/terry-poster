@@ -1,5 +1,5 @@
 WIDTH = 40
-HEIGHT = 40
+HEIGHT = 90
 DEPTH = 10
 MATERIAL = new THREE.MeshDepthMaterial()
 
@@ -21,16 +21,17 @@ class pixelGrid
     for d, i in data
       bw.push(d) if i % 4 == 3
 
-    w = bw.length / canvas.width
-    h = bw.length / canvas.height
+    w = WIDTH
+    h = HEIGHT
     @pixels = new Array(w)
     for x in [0...w]
       @pixels[x] = []
       for y in [0...h]
         @pixels[x].push( 0 )
+    console.log @pixels
     for x in [0...w]
       for y in [0...h]
-        d = x + (w * h - w ) - (y * h)
+        d = x + (w * h - w ) - (y * w)
         @pixels[x][y] = bw[d]
 
   getPixel: (x, y) ->
@@ -41,11 +42,11 @@ class pixelGrid
 
 
 pixelGrid = new pixelGrid(ctx)
-document.body.removeChild(canvas)
+# document.body.removeChild(canvas)
 
 
 scene = new THREE.Scene()
-camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 24, 50 )
+camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 24, 50 )
 scene = new THREE.Scene()
 
 renderer = new THREE.WebGLRenderer ({logarithmicDepthBuffer: true } )
@@ -177,7 +178,7 @@ tube = new Tube(4, 5, 5)
 for [1..50]
   tube.move()
 
-scene.add(tube.createTube())
+# scene.add(tube.createTube())
 
 
 render = () ->
