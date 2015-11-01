@@ -5,9 +5,26 @@
   <meta charset="UTF-8">
   <title>Poster</title>
   <script src="lib/three.min.js"></script>
+  <style media="screen">
+    input {
+      text-align: center;
+      width: 90px;
+      font-size: 25px;
+      display: block;
+    }
+    button {
+      margin: auto;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="input">
+    <input type="text" name="line1" maxlength="3" width="30px">
+    <input type="text" name="line2" maxlength="3" width="30px">
+    <input type="text" name="line3" maxlength="3" width="30px">
+    <button type="button" name="button" id="button">OK</button>
+  </div>
   <script src="js/poster.js" charset="utf-8"></script>
 </body>
 

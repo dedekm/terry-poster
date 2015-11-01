@@ -3,9 +3,9 @@
   var DEPTH, Grid, HEIGHT, MATERIAL, Tube, WIDTH, appendChild, camera, canvas, ctx, grid, j, pixelGrid, render, renderer, scene, tube,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  WIDTH = 40;
+  WIDTH = 70;
 
-  HEIGHT = 90;
+  HEIGHT = 100;
 
   DEPTH = 10;
 
@@ -21,11 +21,13 @@
 
   ctx = canvas.getContext("2d");
 
-  ctx.font = "35px Georgia";
+  ctx.font = "30px Arial";
 
   ctx.fillStyle = "#000000";
 
-  ctx.fillText("M", 3, 35);
+  ctx.textAlign = "center";
+
+  ctx.fillText("MAT", WIDTH / 2, 30);
 
   pixelGrid = (function() {
     function pixelGrid(content) {
@@ -82,8 +84,6 @@
   });
 
   renderer.setSize(window.innerWidth, window.innerHeight);
-
-  document.body.appendChild(renderer.domElement);
 
   renderer.setClearColor(0x000000);
 
@@ -275,7 +275,5 @@
     imgNode.src = imgData;
     return document.body.appendChild(imgNode);
   };
-
-  render();
 
 }).call(this);

@@ -1,5 +1,5 @@
-WIDTH = 40
-HEIGHT = 90
+WIDTH = 70
+HEIGHT = 100
 DEPTH = 10
 MATERIAL = new THREE.MeshDepthMaterial()
 
@@ -10,9 +10,10 @@ canvas.height = HEIGHT
 document.body.appendChild(canvas)
 ctx = canvas.getContext("2d")
 
-ctx.font = "35px Georgia"
+ctx.font = "30px Arial"
 ctx.fillStyle = "#000000"
-ctx.fillText("M", 3, 35)
+ctx.textAlign="center"
+ctx.fillText("MAT", WIDTH/2, 30)
 class pixelGrid
   constructor: (content) ->
     imageData = content.getImageData(0, 0, content.canvas.width, content.canvas.height)
@@ -51,7 +52,7 @@ scene = new THREE.Scene()
 
 renderer = new THREE.WebGLRenderer ({logarithmicDepthBuffer: true } )
 renderer.setSize( window.innerWidth, window.innerHeight )
-document.body.appendChild( renderer.domElement )
+# document.body.appendChild( renderer.domElement )
 renderer.setClearColor(0x000000)
 
 class Grid
@@ -190,4 +191,4 @@ appendChild = () ->
   imgNode.src = imgData
   document.body.appendChild(imgNode)
 
-render()
+# render()
