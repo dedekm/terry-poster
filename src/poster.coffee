@@ -1,9 +1,3 @@
-WIDTH = 70
-HEIGHT = 100
-DEPTH = 10
-MATERIAL = new THREE.MeshDepthMaterial()
-
-
 canvas = document.createElement('canvas')
 canvas.width = WIDTH
 canvas.height = HEIGHT
@@ -14,37 +8,9 @@ ctx.font = "30px Arial"
 ctx.fillStyle = "#000000"
 ctx.textAlign="center"
 ctx.fillText("MAT", WIDTH/2, 30)
-class pixelGrid
-  constructor: (content) ->
-    imageData = content.getImageData(0, 0, content.canvas.width, content.canvas.height)
-    data = imageData.data
-    bw = []
-    for d, i in data
-      bw.push(d) if i % 4 == 3
 
-    w = WIDTH
-    h = HEIGHT
-    @pixels = new Array(w)
-    for x in [0...w]
-      @pixels[x] = []
-      for y in [0...h]
-        @pixels[x].push( 0 )
-    console.log @pixels
-    for x in [0...w]
-      for y in [0...h]
-        d = x + (w * h - w ) - (y * w)
-        @pixels[x][y] = bw[d]
-
-  getPixel: (x, y) ->
-    if @pixels[x] && @pixels[x][y]
-      @pixels[x][y]
-    else
-      0
-
-
-pixelGrid = new pixelGrid(ctx)
+pixelGrid = new PixelGrid(ctx)
 # document.body.removeChild(canvas)
-
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 24, 50 )
@@ -54,48 +20,6 @@ renderer = new THREE.WebGLRenderer ({logarithmicDepthBuffer: true } )
 renderer.setSize( window.innerWidth, window.innerHeight )
 # document.body.appendChild( renderer.domElement )
 renderer.setClearColor(0x000000)
-
-class Grid
-  constructor: (width, height, depth) ->
-    @nodes = this.setGrid(width, height, depth)
-
-  setGrid: (w, h, d) ->
-    n = []
-    for x in [0..w - 1]
-      a = []
-      for y in [0..h - 1]
-        b = []
-        for z in [0..d - 1]
-          b.push {x: x, y: y, z: z, full: false}
-        a.push b
-      n.push a
-    return n
-
-  getNode: (x, y, z) ->
-    if @nodes[x] && @nodes[x][y] && @nodes[x][y][z]
-      'full' if @nodes[x][y][z].full
-    else
-      'out'
-
-  setNode: (x, y, z, full) ->
-    if @nodes[x] && @nodes[x][y] && @nodes[x][y][z]
-      @nodes[x][y][z].full = full
-
-
-  helpGrid: (pixels) ->
-    g = new THREE.Group
-    geometry1 = new THREE.BoxGeometry( 0.1, 0.1, 0.1)
-    for x in [0...@nodes.length]
-      for y in [0...@nodes[x].length]
-        z = @nodes[x][y].length - 2
-        if pixels[x][y] != 0
-          material1 = new THREE.MeshBasicMaterial( { color: 0xff0000 } )
-        else
-          material1 = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
-        cube = new THREE.Mesh( geometry1, material1 )
-        cube.position.set(x, y, z)
-        g.add( cube )
-    return g
 
 grid = new Grid(WIDTH, HEIGHT, DEPTH)
 camera.position.set( WIDTH/2, HEIGHT/2, 45 )
