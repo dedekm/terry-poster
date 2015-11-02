@@ -23,7 +23,7 @@
     document.body.removeChild(canvas);
     $('#input').remove();
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(100, WIDTH / HEIGHT, 24, 50);
+    camera = new THREE.PerspectiveCamera(100, WIDTH / HEIGHT, 33, 33 + DEPTH * 2 - 1);
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer({
       logarithmicDepthBuffer: true
@@ -56,14 +56,14 @@
 
       Tube.prototype.possible_directions = function() {
         var direction, directions, preferable, preferable_directions;
-        preferable = [pixelGrid.getPixel(this.x + 1, this.y) > 0 ? 'right' : void 0, pixelGrid.getPixel(this.x, this.y + 1) > 0 ? 'up' : void 0, pixelGrid.getPixel(this.x, this.y) > 0 ? 'forward' : void 0, pixelGrid.getPixel(this.x - 1, this.y) > 0 ? 'left' : void 0, pixelGrid.getPixel(this.x, this.y - 1) > 0 ? 'down' : void 0].filter(Boolean);
-        if (pixelGrid.getPixel(this.x, this.y) > 0 && this.z < DEPTH - DEPTH / 3) {
+        preferable = [pixelGrid.getPixel(this.x + 1, this.y) > 0 ? 'right' : void 0, pixelGrid.getPixel(this.x, this.y + 1) > 0 ? 'up' : void 0, pixelGrid.getPixel(this.x, this.y) > 0 ? 'forward' : void 0, pixelGrid.getPixel(this.x - 1, this.y) > 0 ? 'left' : void 0, pixelGrid.getPixel(this.x, this.y - 1) > 0 ? 'down' : void 0, pixelGrid.getPixel(this.x, this.y) > 0 && this.z >= DEPTH - 2 ? 'backward' : void 0].filter(Boolean);
+        if (pixelGrid.getPixel(this.x, this.y) > 0 && this.z < DEPTH - DEPTH / 2) {
           preferable = ['forward'];
         }
         if (pixelGrid.getPixel(this.x, this.y) === 0 && this.z > DEPTH / 3) {
           preferable = ['backward'];
         }
-        directions = [!grid.getNode(this.x + 1, this.y, this.z) ? 'right' : void 0, !grid.getNode(this.x, this.y + 1, this.z) ? 'up' : void 0, !grid.getNode(this.x, this.y, this.z + 1) || (this.z > DEPTH / 3 && pixelGrid.getPixel(this.x, this.y) === 0) ? 'forward' : void 0, !grid.getNode(this.x - 1, this.y, this.z) ? 'left' : void 0, !grid.getNode(this.x, this.y - 1, this.z) ? 'down' : void 0, !grid.getNode(this.x, this.y, this.z - 1) ? 'backward' : void 0].filter(Boolean);
+        directions = [!grid.getNode(this.x + 1, this.y, this.z) ? 'right' : void 0, !grid.getNode(this.x, this.y + 1, this.z) ? 'up' : void 0, !grid.getNode(this.x, this.y, this.z + 1) && ((this.z < DEPTH / 4 && pixelGrid.getPixel(this.x, this.y) === 0) || (pixelGrid.getPixel(this.x, this.y) > 0)) ? 'forward' : void 0, !grid.getNode(this.x - 1, this.y, this.z) ? 'left' : void 0, !grid.getNode(this.x, this.y - 1, this.z) ? 'down' : void 0, !grid.getNode(this.x, this.y, this.z - 1) ? 'backward' : void 0].filter(Boolean);
         preferable_directions = (function() {
           var k, len1, results;
           results = [];
@@ -126,12 +126,12 @@
     tubes = [];
     for (x = k = 0, ref = WIDTH / n; 0 <= ref ? k < ref : k > ref; x = 0 <= ref ? ++k : --k) {
       for (y = l = 0, ref1 = HEIGHT / n; 0 <= ref1 ? l < ref1 : l > ref1; y = 0 <= ref1 ? ++l : --l) {
-        if (grid.getNode(x * n, y * n, 2) !== 'full') {
-          tubes.push(new Tube(x * n, y * n, 2));
+        if (grid.getNode(x * n, y * n, 1) !== 'full') {
+          tubes.push(new Tube(x * n, y * n, 1));
         }
       }
     }
-    for (m = 0; m <= 100; m++) {
+    for (m = 0; m <= 40; m++) {
       for (o = 0, len1 = tubes.length; o < len1; o++) {
         tube = tubes[o];
         tube.move();
@@ -187,7 +187,7 @@
     };
     render = function() {
       renderer.render(scene, camera);
-      return renderPDF();
+      return appendChild();
     };
     appendChild = function() {
       var imgData, imgNode;

@@ -21,7 +21,7 @@ window.init = () ->
   $('#input').remove()
 
   scene = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 24, 50 )
+  camera = new THREE.PerspectiveCamera( 100, WIDTH / HEIGHT, 33, 33 + DEPTH*2-1 )
   scene = new THREE.Scene()
 
   renderer = new THREE.WebGLRenderer ({logarithmicDepthBuffer: true } )
@@ -50,15 +50,16 @@ window.init = () ->
         'up' if pixelGrid.getPixel(@x,@y + 1) > 0,
         'forward' if pixelGrid.getPixel(@x, @y) > 0,
         'left' if pixelGrid.getPixel(@x - 1,@y) > 0,
-        'down' if pixelGrid.getPixel(@x,@y - 1) > 0
+        'down' if pixelGrid.getPixel(@x,@y - 1) > 0,
+        'backward' if pixelGrid.getPixel(@x, @y) > 0 and @z >= DEPTH - 2
       ].filter(Boolean)
-      preferable = ['forward'] if pixelGrid.getPixel(@x, @y) > 0 && @z < DEPTH - DEPTH/3
+      preferable = ['forward'] if pixelGrid.getPixel(@x, @y) > 0 && @z < DEPTH - DEPTH/2
       preferable = ['backward'] if pixelGrid.getPixel(@x, @y) == 0 && @z > DEPTH / 3
 
       directions = [
         'right' unless grid.getNode(@x + 1, @y, @z),
         'up' unless grid.getNode(@x, @y + 1, @z),
-        'forward' if not grid.getNode(@x, @y, @z + 1) or (@z > DEPTH / 3 && pixelGrid.getPixel(@x, @y) == 0),
+        'forward' if not grid.getNode(@x, @y, @z + 1) and ((@z < DEPTH / 4 and pixelGrid.getPixel(@x, @y) == 0) or (pixelGrid.getPixel(@x, @y) > 0)),
         'left' unless grid.getNode(@x - 1, @y, @z),
         'down' unless grid.getNode(@x, @y - 1, @z),
         'backward' unless grid.getNode(@x, @y, @z - 1)
@@ -110,12 +111,19 @@ window.init = () ->
   tubes = []
   for x in [0...WIDTH/n]
     for y in [0...HEIGHT/n]
-      unless grid.getNode(x* n,y * n,2) == 'full'
-        tubes.push new Tube(x * n,y * n,2)
+      unless grid.getNode(x* n,y * n,1) == 'full'
+        tubes.push new Tube(x * n,y * n,1)
 
-  for [0..100]
+  for [0..40]
     for tube in tubes
       tube.move()
+
+  # tubes = [new Tube(55, 55,0)]
+  # for [0..20]
+  #   tubes[0].move()
+  #   console.log 'z = ' + tubes[0].z
+  #   console.log String(tubes[0].possible_directions())
+  #   console.log '----'
 
   group = new THREE.Geometry()
   for tube in tubes
@@ -164,8 +172,8 @@ window.init = () ->
 
   render = () ->
     renderer.render( scene, camera )
-    # appendChild()
-    renderPDF()
+    appendChild()
+    # renderPDF()
 
   appendChild = () ->
     imgData = renderer.domElement.toDataURL()
