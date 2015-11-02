@@ -21,16 +21,16 @@ window.init = () ->
   $('#input').remove()
 
   scene = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera( 55, WIDTH / HEIGHT, 62, 105.5 )
+  camera = new THREE.PerspectiveCamera( 60, WIDTH / HEIGHT, 63, 105.5 )
   scene = new THREE.Scene()
 
   renderer = new THREE.WebGLRenderer(  )
-  renderer.setSize( WIDTH * 13, HEIGHT * 13 )
+  renderer.setSize( WIDTH * 12, HEIGHT * 12 )
   # document.body.appendChild( renderer.domElement )
   renderer.setClearColor(0x000000)
 
   grid = new Grid(WIDTH, HEIGHT, DEPTH)
-  camera.position.set( WIDTH/2, HEIGHT/2 + 3, 105 )
+  camera.position.set( WIDTH/2, HEIGHT/2 + 2, 105 )
 
   class Tube
     constructor: (@x, @y, @z) ->
@@ -142,7 +142,6 @@ window.init = () ->
     doc.setFontSize(8)
     doc.setTextColor(160,160,160)
 
-    # align = 350 - s.length
     s = [ 'The Matrix – The Wachowskis',
           '© Martin Dedek, Graficky design 2, FUD UJEP',
           '',
@@ -151,7 +150,7 @@ window.init = () ->
           new Date().toUTCString() + ' for Terry posters'
         ]
     for string, i in s
-      doc.text("#{new Date().getTime()} ~ #{string}", 22, 1000 - (s.length-1) * 3 + i * 3)
+      doc.text("#{new Date().getTime()} ~ #{string}", 22, 1000 - (s.length-1) * 4 + i * 4)
 
     for i in [{c: 255, w: 1.5}, {c: 0, w: 0.5}]
       doc.setDrawColor(i.c,i.c,i.c)
@@ -169,8 +168,8 @@ window.init = () ->
       doc.line(12, 1015, 12, 1024)
 
 
-    doc.save('Test.pdf')
-    doc.output('dataurlstring', 'Test.pdf')
+    doc.save('poster.pdf')
+    # doc.output('dataurlstring', 'Test.pdf')
 
   render = () ->
     renderer.render( scene, camera )
@@ -184,6 +183,5 @@ window.init = () ->
     document.body.appendChild(imgNode)
 
   render()
-
 
 init()
