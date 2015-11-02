@@ -4,7 +4,7 @@
 
   window.HEIGHT = 120;
 
-  window.DEPTH = 7;
+  window.DEPTH = 10;
 
   window.MATERIAL = new THREE.MeshDepthMaterial({
     side: THREE.DoubleSide
