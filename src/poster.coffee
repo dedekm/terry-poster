@@ -184,5 +184,3 @@ window.init = () ->
     document.body.appendChild(imgNode)
 
   render()
-
-init()

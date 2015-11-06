@@ -196,6 +196,4 @@
     return render();
   };
 
-  init();
-
 }).call(this);
