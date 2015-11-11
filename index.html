@@ -8,14 +8,32 @@
   <script src="lib/jspdf.debug.js"></script>
   <script src="lib/jquery-2.1.4.min.js" charset="utf-8"></script>
   <style media="screen">
+    body {
+      background-color: black;
+      color: whitesmoke;
+      font-size: 13px;
+    }
+    #input {
+      text-align: center;
+      font-family: monospace;
+      max-width: 300px;
+      margin: 10% auto;
+    }
+    #input a {
+      color: inherit;
+    }
     input {
+      margin: 2px auto;
       text-align: center;
       width: 90px;
       font-size: 25px;
       display: block;
     }
     button {
-      margin: auto;
+      font-family: monospace;
+      width: 42px;
+      height: 42px;
+      margin: 0 auto;
     }
   </style>
 </head>
@@ -23,10 +41,16 @@
 <body>
   <div id="input">
     <form>
+      <p>scifi poster generator for Terry posters</p>
+      <p>developed by Martin Dedek / <a href="https://www.facebook.com/gd2fud">GD2</a> / 2015</p>
+      <p>software licensed under the <a href="http://choosealicense.com/licenses/mit/">MIT licence</a></p>
+      <br>
+      <p>use your own text to generate ready&#8209;to&#8209;print b1 poster</p>
       <input type="text" name="line1" maxlength="3" width="30px" >
       <input type="text" name="line2" maxlength="3" width="30px" >
       <input type="text" name="line3" maxlength="3" width="30px" >
       <button type="button" name="button" id="button" onclick="init()">OK</button>
+      <p><a href="https://github.com/dedekm/terry-poster">source code</a></p>
     </form>
   </div>
   <script src="js/constants.js" charset="utf-8"></script>
